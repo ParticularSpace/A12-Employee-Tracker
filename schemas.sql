@@ -1,0 +1,15 @@
+DROP DATABASE IF EXISTS `employees`;
+CREATE DATABASE IF NOT EXISTS `employees`;
+
+CREATE TABLE departments (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE role (
+
+);
+
+CREATE TABLE employee (
+
+);
