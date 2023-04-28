@@ -1,3 +1,4 @@
+require('dotenv').config();
 import('inquirer').then(({ default: inquirer }) => {
 
     const {
@@ -17,7 +18,7 @@ import('inquirer').then(({ default: inquirer }) => {
     } = require('./db/queries');
     
     
-
+// Begin the application and give our choices
 const mainMenu = async () => {
   const { choice } = await inquirer.prompt([
     {
@@ -43,6 +44,7 @@ const mainMenu = async () => {
     },
   ]);
 
+  // Call the appropriate function depending on what the user chose
   switch (choice) {
     case 'View All Departments':
       return viewAllDepartments();
@@ -76,6 +78,7 @@ const mainMenu = async () => {
   }
 };
 
+// Call the mainMenu function to start the application
 const viewAllDepartments = async () => {
   const departments = await getAllDepartments();
   console.table(departments);
