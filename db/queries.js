@@ -3,7 +3,7 @@ const connection = require('./conection.js');
 //Query to get all departments
 const viewAllDepartments = () => {
     return new Promise((resolve, reject) => {
-        const query = 'SELECT * FROM departments';
+        const query = 'SELECT DISTINCT name FROM departments';
         connection.query(query, (err, results) => {
             if (err) reject(err);
             resolve(results);
@@ -14,7 +14,7 @@ const viewAllDepartments = () => {
 // query to get all roles
 const viewAllRoles = () => {
     return new Promise((resolve, reject) => {
-        const query = 'SELECT * FROM role';
+        const query = 'SELECT * FROM roles';
         connection.query(query, (err, results) => {
             if (err) reject(err);
             resolve(results);
@@ -25,7 +25,7 @@ const viewAllRoles = () => {
 // Query to get all employees
 const viewAllEmployees = () => {
     return new Promise((resolve, reject) => {
-        const query = 'SELECT * FROM employee';
+        const query = 'SELECT * FROM employees';
         connection.query(query, (err, results) => {
             if (err) reject(err);
             resolve(results);
@@ -47,7 +47,7 @@ const addDepartment = (departmentName) => {
 // Query to add roles
 const addRole = (role) => {
     return new Promise((resolve, reject) => {
-        const query = 'INSERT INTO role SET ?';
+        const query = 'INSERT INTO roles SET title = ?, salary = ?, department_id = ?';
         connection.query(query, { title: role.title, salary: role.salary, department_id: role.department_id }, (err, results) => {
             if (err) reject(err);
             resolve(results);
@@ -58,7 +58,7 @@ const addRole = (role) => {
 // Query to add a role
 const addEmployee = (employee) => {
     return new Promise((resolve, reject) => {
-        const query = 'INSERT INTO employee SET ?';
+        const query = 'INSERT INTO employees SET first_name = ?, last_name = ?, role_id = ?, manager_id = ?';
         connection.query(query, { first_name: employee.first_name, last_name: employee.last_name, role_id: employee.role_id, manager_id: employee.manager_id }, (err, results) => {
             if (err) reject(err);
             resolve(results);
@@ -69,7 +69,7 @@ const addEmployee = (employee) => {
 // Query to update an employee's role
 const updateEmployeeRole = (employee) => {
     return new Promise((resolve, reject) => {
-        const query = 'UPDATE employee SET role_id = ? WHERE id = ?';
+        const query = 'UPDATE employees SET role_id = ? WHERE id = ?';
         connection.query(query, [employee.role_id, employee.id], (err, results) => {
             if (err) reject(err);
             resolve(results);
@@ -79,7 +79,7 @@ const updateEmployeeRole = (employee) => {
 
 const updateEmployeeToManager = (employee) => {
     return new Promise((resolve, reject) => {
-        const query = 'UPDATE employee SET manager_id = ? WHERE id = ?';
+        const query = 'UPDATE employees SET manager_id = ? WHERE id = ?';
         connection.query(query, [employee.manager_id, employee.id], (err, results) => {
             if (err) reject(err);
             resolve(results);
@@ -90,7 +90,7 @@ const updateEmployeeToManager = (employee) => {
 // Query to get all employees by department
 const getEmployeesByDepartment = (departmentId) => {
     return new Promise((resolve, reject) => {
-        const query = 'SELECT * FROM employee WHERE role_id IN (SELECT id FROM role WHERE department_id = ?)';
+        const query = 'SELECT DISTINCT * FROM employees WHERE role_id IN (SELECT id FROM roles WHERE department_id = ?)';
         connection.query(query, [departmentId], (err, results) => {
             if (err) reject(err);
             resolve(results);
@@ -112,7 +112,7 @@ const deleteDepartment = (departmentId) => {
 // Query to delete a role
 const deleteRole = (roleId) => {
     return new Promise((resolve, reject) => {
-        const query = 'DELETE FROM role WHERE id = ?';
+        const query = 'DELETE FROM roles WHERE id = ?';
         connection.query(query, [roleId], (err, results) => {
             if (err) reject(err);
             resolve(results);
@@ -123,7 +123,7 @@ const deleteRole = (roleId) => {
 // Query to delete an employee
 const deleteEmployee = (employeeId) => {
     return new Promise((resolve, reject) => {
-        const query = 'DELETE FROM employee WHERE id = ?';
+        const query = 'DELETE FROM employees WHERE id = ?';
         connection.query(query, [employeeId], (err, results) => {
             if (err) reject(err);
             resolve(results);
@@ -134,7 +134,7 @@ const deleteEmployee = (employeeId) => {
 // Query to view department budgets
 const viewDepartmentBudgets = () => {
     return new Promise((resolve, reject) => {
-        const query = 'SELECT departments.id, departments.name, SUM(roles.salary) as budget FROM departments JOIN role ON departments.id = role.department_id GROUP BY departments.id, departments.name';
+        const query = 'SELECT departments.id, departments.name, SUM(roles.salary) as budget FROM departments JOIN roles ON departments.id = roles.department_id GROUP BY departments.id, departments.name';
         connection.query(query, (err, results) => {
             if (err) reject(err);
             resolve(results);
