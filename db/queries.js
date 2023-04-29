@@ -14,23 +14,46 @@ const viewAllDepartments = () => {
 // query to get all roles
 const viewAllRoles = () => {
     return new Promise((resolve, reject) => {
-        const query = 'SELECT * FROM roles';
+        const query = `
+          SELECT roles.id, roles.title, roles.salary, departments.name AS department
+          FROM roles
+          JOIN departments ON roles.department_id = departments.id;
+        `;
         connection.query(query, (err, results) => {
-            if (err) reject(err);
-            resolve(results);
+          if (err) {
+            reject(err);
+            return;
+          }
+          results.forEach(row => {
+            delete row.index;
+          });
+          resolve(results);
         });
-    });
+      });
 };
 
 // Query to get all employees
 const viewAllEmployees = () => {
     return new Promise((resolve, reject) => {
-        const query = 'SELECT * FROM employees';
+        const query = `
+          SELECT 
+            e.id, 
+            e.first_name, 
+            e.last_name, 
+            r.title, 
+            d.name AS department, 
+            r.salary, 
+            CONCAT(m.first_name, ' ', m.last_name) AS manager
+          FROM employees e
+          LEFT JOIN roles r ON e.role_id = r.id
+          LEFT JOIN departments d ON r.department_id = d.id
+          LEFT JOIN employees m ON e.manager_id = m.id;
+        `;
         connection.query(query, (err, results) => {
-            if (err) reject(err);
-            resolve(results);
+          if (err) reject(err);
+          resolve(results);
         });
-    });
+      });
 };
 
 //Query to add a department
@@ -46,11 +69,15 @@ const addDepartment = (departmentName) => {
 
 // Query to add roles
 const addRole = (role) => {
+    console.log('Role:', role);
     return new Promise((resolve, reject) => {
-        const query = 'INSERT INTO roles SET title = ?, salary = ?, department_id = ?';
-        connection.query(query, { title: role.title, salary: role.salary, department_id: role.department_id }, (err, results) => {
-            if (err) reject(err);
-            resolve(results);
+        const query = 'INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)';
+        connection.query(query, [role.title, role.salary, role.department_id], (err, results) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(results);
+            }
         });
     });
 };
@@ -58,12 +85,12 @@ const addRole = (role) => {
 // Query to add a role
 const addEmployee = (employee) => {
     return new Promise((resolve, reject) => {
-        const query = 'INSERT INTO employees SET first_name = ?, last_name = ?, role_id = ?, manager_id = ?';
-        connection.query(query, { first_name: employee.first_name, last_name: employee.last_name, role_id: employee.role_id, manager_id: employee.manager_id }, (err, results) => {
-            if (err) reject(err);
-            resolve(results);
+        const query = 'INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)';
+        connection.query(query, [employee.first_name, employee.last_name, employee.role_id, employee.manager_id], (err, results) => {
+          if (err) reject(err);
+          resolve(results);
         });
-    });
+      });
 };
 
 // Query to update an employee's role
