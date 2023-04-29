@@ -85,6 +85,7 @@ const viewAllDepartments = async () => {
   mainMenu();
 };
 
+// Prompt the user for a new department name and then add it to the database
 const addNewDepartment = async () => {
   const { departmentName } = await inquirer.prompt([
     {
@@ -99,12 +100,14 @@ const addNewDepartment = async () => {
   mainMenu();
 };
 
+// Prompt user to view all roles
 const viewAllRoles = async () => {
     const roles = await getAllRoles();
     console.table(roles);
     mainMenu();
   };
   
+  // Prompt the user for a new role name and then add it to the database
   const addNewRole = async () => {
     
     const departments = await getAllDepartments();
@@ -135,18 +138,82 @@ const viewAllRoles = async () => {
     console.log('Role added successfully!');
     mainMenu();
   };
-  
+
+  // Prompt user to view all employees
     const viewAllEmployees = async () => {
         const employees = await getAllEmployees();
         console.table(employees);
     };
 
+    // Prompt the user for a new employee name and then add it to the database
     const addEmployee = async () => {
+        const roles = await getAllRoles();
+        const employees = await getAllEmployees();
 
+        const { firstName, lastName, roleId, managerId } = await inquirer.prompt([
+            {
+                type: 'input',
+                name: 'firstName',
+                message: 'Enter the new employee first name:',
+            },
+            {
+                type: 'input',
+                name: 'lastName',
+                message: 'Enter the new employee last name:',
+            },
+            {
+                type: 'list',
+                name: 'roleId',
+                message: 'Choose the role for this employee:',
+                choices: roles.map((role) => ({
+                    name: role.title,
+                    value: role.id,
+                })),
+            },
+            {
+                type: 'list',
+                name: 'managerId',
+                message: 'Choose the manager for this employee:',
+                choices: employees.map((employee) => ({
+                    name: `${employee.first_name} ${employee.last_name}`,
+                    value: employee.id,
+                })),
+            },
+        ]);
+
+        await addEmployee(firstName, lastName, roleId, managerId);
+        console.log('Employee added successfully!');
+        mainMenu();
     };
 
     const updateEmployeeRole = async () => {
-
+      const employees = await getAllEmployees();
+      const roles = await getAllRoles();
+    
+      const { employeeId, newRoleId } = await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'employeeId',
+          message: 'Select the employee whose role you want to update:',
+          choices: employees.map((employee) => ({
+            name: `${employee.first_name} ${employee.last_name}`,
+            value: employee.id,
+          })),
+        },
+        {
+          type: 'list',
+          name: 'newRoleId',
+          message: 'Select the new role for the employee:',
+          choices: roles.map((role) => ({
+            name: role.title,
+            value: role.id,
+          })),
+        },
+      ]);
+    
+      await updateEmployeeRole(employeeId, newRoleId);
+      console.log('Employee role updated successfully!');
+      mainMenu();
     };
 
     const updateEmployeeManager = async () => {
