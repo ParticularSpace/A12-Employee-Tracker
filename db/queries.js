@@ -1,7 +1,7 @@
 const connection = require('./conection.js');
 
 //Query to get all departments
-const getAllDepartments = () => {
+const getAllDepartmentsPrompt = () => {
     return new Promise((resolve, reject) => {
         const query = 'SELECT * FROM departments';
         connection.query(query, (err, results) => {
@@ -12,7 +12,7 @@ const getAllDepartments = () => {
 };
 
 //Query to add a department
-const addDepartment = (departmentName) => {
+const addDepartmentPrompt = (departmentName) => {
     return new Promise((resolve, reject) => {
         const query = 'INSERT INTO departments SET ?';
         connection.query(query, { name: departmentName }, (err, results) => {
@@ -23,7 +23,7 @@ const addDepartment = (departmentName) => {
 };
 
 // Query to get all roles
-const addRole = (role) => {
+const addRolePrompt = (role) => {
     return new Promise((resolve, reject) => {
         const query = 'INSERT INTO roles SET ?';
         connection.query(query, { title: role.title, salary: role.salary, department_id: role.department_id }, (err, results) => {
@@ -34,7 +34,7 @@ const addRole = (role) => {
 };
 
 // Query to add a role
-const addEmployee = (employee) => {
+const addEmployeePrompt = (employee) => {
     return new Promise((resolve, reject) => {
         const query = 'INSERT INTO employees SET ?';
         connection.query(query, { first_name: employee.first_name, last_name: employee.last_name, role_id: employee.role_id, manager_id: employee.manager_id }, (err, results) => {
@@ -45,7 +45,7 @@ const addEmployee = (employee) => {
 };
 
 // Query to update an employee's role
-const updateEmployeeRole = (employee) => {
+const updateEmployeeRolePrompt = (employee) => {
     return new Promise((resolve, reject) => {
         const query = 'UPDATE employees SET role_id = ? WHERE id = ?';
         connection.query(query, [employee.role_id, employee.id], (err, results) => {
@@ -55,7 +55,7 @@ const updateEmployeeRole = (employee) => {
     });
 };
 
-const updateEmployeeManager = (employee) => {
+const updateEmployeeManagerPrompt = (employee) => {
     return new Promise((resolve, reject) => {
         const query = 'UPDATE employees SET manager_id = ? WHERE id = ?';
         connection.query(query, [employee.manager_id, employee.id], (err, results) => {
@@ -66,7 +66,7 @@ const updateEmployeeManager = (employee) => {
 };
 
 // Query to get all employees by department
-const getEmployeesByDepartment = (departmentId) => {
+const getEmployeesByDepartmentPrompt = (departmentId) => {
     return new Promise((resolve, reject) => {
         const query = 'SELECT * FROM employees WHERE role_id IN (SELECT id FROM roles WHERE department_id = ?)';
         connection.query(query, [departmentId], (err, results) => {
@@ -77,33 +77,33 @@ const getEmployeesByDepartment = (departmentId) => {
 };
 
 // Query to get all roles
-const getAllRoles = () => {
+const getAllRolesPrompt = () => {
 
 };
 
 // Query to get all employees
-const getAllEmployees = () => {
+const getAllEmployeesPrompt = () => {
 
 };
 
 // Query to delete a department
-const deleteDepartment = (departmentId) => {
+const deleteDepartmentPrompt = (departmentId) => {
 
 };
 
 // Query to delete a role
-const deleteRole = (roleId) => {
+const deleteRolePrompt = (roleId) => {
 
 };
 
 // Query to delete an employee
-const deleteEmployee = (employeeId) => {
+const deleteEmployeePrompt = (employeeId) => {
 
 };
 
 // Query to view department budgets
-const viewDepartmentBudgets = () => {
-    
+const viewDepartmentBudgetsPrompt = () => {
+
 };
 
 
@@ -112,19 +112,19 @@ const viewDepartmentBudgets = () => {
 
 // Export all functions as methods to be used in index.js
 module.exports = {
-    getAllDepartments,
-    addDepartment,
-    getAllRoles,
-    addRole,
-    getAllEmployees,
-    addEmployee,
-    updateEmployeeRole,
-    updateEmployeeManager,
-    getEmployeesByDepartment,
-    deleteDepartment,
-    deleteRole,
-    deleteEmployee,
-    viewDepartmentBudgets,
+    getAllDepartmentsPrompt,
+    addDepartmentPrompt,
+    getAllRolesPrompt,
+    addRolePrompt,
+    getAllEmployeesPrompt,
+    addEmployeePrompt,
+    updateEmployeeRolePrompt,
+    updateEmployeeManagerPrompt,
+    getEmployeesByDepartmentPrompt,
+    deleteDepartmentPrompt,
+    deleteRolePrompt,
+    deleteEmployeePrompt,
+    viewDepartmentBudgetsPrompt,
 };
 
 

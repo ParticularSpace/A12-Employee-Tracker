@@ -1,20 +1,25 @@
 require('dotenv').config();
-import('inquirer').then(({ default: inquirer }) => {
+
+(async () => {
+  const { default: inquirer } = await import('inquirer');
+
+// Rest of the code
+
 
     const {
-        getAllDepartments,
-        addDepartment,
-        getAllRoles,
-        addRole,
-        getAllEmployees,
-        addEmployee,
-        updateEmployeeRole,
-        updateEmployeeManager,
-        getEmployeesByDepartment,
-        deleteDepartment,
-        deleteRole,
-        deleteEmployee,
-        viewDepartmentBudgets,
+        getAllDepartmentsPrompt,
+        addDepartmentPrompt,
+        getAllRolesPrompt,
+        addRolePrompt,
+        getAllEmployeesPrompt,
+        addEmployeePrompt,
+        updateEmployeeRolePrompt,
+        updateEmployeeManagerPrompt,
+        getEmployeesByDepartmentPrompt,
+        deleteDepartmentPrompt,
+        deleteRolePrompt,
+        deleteEmployeePrompt,
+        viewDepartmentBudgetsPrompt,
     } = require('./db/queries');
     
     
@@ -47,31 +52,31 @@ const mainMenu = async () => {
   // Call the appropriate function depending on what the user chose
   switch (choice) {
     case 'View All Departments':
-      return viewAllDepartments();
+      return viewAllDepartmentsPrompt();
     case 'Add Department':
-      return addNewDepartment();
+      return addNewDepartmentPrompt();
     case 'View All Roles':
-        return viewAllRoles();
+        return viewAllRolesPrompt();
     case 'Add Role':
-        return addNewRole();
+        return addNewRolePrompt();
     case 'View All Employees':
-        return viewAllEmployees();
+        return viewAllEmployeesPrompt();
     case 'Add Employee':
-        return addEmployee();
+        return addNewEmployeePrompt();
     case 'Update Employee Role':
-        return updateEmployeeRole();
+        return updateEmployeeRolePrompt();
     case 'Update Employee Manager':
-        return updateEmployeeManager();
+        return updateEmployeeManagerPrompt();
     case 'View Employees By Department':
-        return getEmployeesByDepartment();
+        return getEmployeesByDepartmentPrompt();
     case 'Delete Department':
-        return deleteDepartment();
+        return deleteDepartmentPrompt();
     case 'Delete Role':
-        return deleteRole();
+        return deleteRolePrompt();
     case 'Delete Employee':
-        return deleteEmployee();
+        return deleteEmployeePrompt();
     case 'View Department Budgets':
-        return viewDepartmentBudgets();
+        return viewDepartmentBudgetsPrompt();
     case 'Exit':
       console.log('Goodbye!');
       process.exit(0);
@@ -79,14 +84,14 @@ const mainMenu = async () => {
 };
 
 // Call the mainMenu function to start the application
-const viewAllDepartments = async () => {
+const viewAllDepartmentsPrompt = async () => {
   const departments = await getAllDepartments();
   console.table(departments);
   mainMenu();
 };
 
 // Prompt the user for a new department name and then add it to the database
-const addNewDepartment = async () => {
+const addNewDepartmentPrompt = async () => {
   const { departmentName } = await inquirer.prompt([
     {
       type: 'input',
@@ -95,20 +100,20 @@ const addNewDepartment = async () => {
     },
   ]);
 
-  await addDepartment(departmentName);
+  await addDepartmentPrompt(departmentName);
   console.log('Department added successfully!');
   mainMenu();
 };
 
 // Prompt user to view all roles
-const viewAllRoles = async () => {
-    const roles = await getAllRoles();
+const viewAllRolesPrompt = async () => {
+    const roles = await getAllRolesPrompt();
     console.table(roles);
     mainMenu();
   };
   
   // Prompt the user for a new role name and then add it to the database
-  const addNewRole = async () => {
+  const addNewRolePrompt = async () => {
     
     const departments = await getAllDepartments();
   
@@ -134,21 +139,21 @@ const viewAllRoles = async () => {
       },
     ]);
   
-    await addRole(title, salary, departmentId);
+    await addRolePrompt(title, salary, departmentId);
     console.log('Role added successfully!');
     mainMenu();
   };
 
   // Prompt user to view all employees
     const viewAllEmployees = async () => {
-        const employees = await getAllEmployees();
+        const employees = await getAllEmployeesPrompt();
         console.table(employees);
     };
 
     // Prompt the user for a new employee name and then add it to the database
-    const addEmployee = async () => {
+    const addNewEmployee = async () => {
         const roles = await getAllRoles();
-        const employees = await getAllEmployees();
+        const employees = await getAllEmployeesPrompt();
 
         const { firstName, lastName, roleId, managerId } = await inquirer.prompt([
             {
@@ -181,13 +186,13 @@ const viewAllRoles = async () => {
             },
         ]);
 
-        await addEmployee(firstName, lastName, roleId, managerId);
+        await addEmployeePrompt(firstName, lastName, roleId, managerId);
         console.log('Employee added successfully!');
         mainMenu();
     };
 
-    const updateEmployeeRole = async () => {
-      const employees = await getAllEmployees();
+    const updateEmployeeRolePrompt = async () => {
+      const employees = await getAllEmployeesPrompt();
       const roles = await getAllRoles();
     
       const { employeeId, newRoleId } = await inquirer.prompt([
@@ -211,36 +216,127 @@ const viewAllRoles = async () => {
         },
       ]);
     
-      await updateEmployeeRole(employeeId, newRoleId);
+      await updateEmployeeRolePrompt(employeeId, newRoleId);
       console.log('Employee role updated successfully!');
       mainMenu();
     };
 
-    const updateEmployeeManager = async () => {
+    const updateEmployeeManagerPrompt = async () => {
+      const employees = await getAllEmployeesPrompt();
 
+      const { employeeId, newManagerId } = await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'employeeId',
+          message: 'Select the employee whose manager you want to update:',
+          choices: employees.map((employee) => ({
+            name: `${employee.first_name} ${employee.last_name}`,
+            value: employee.id,
+          })),
+        },
+        {
+          type: 'list',
+          name: 'newManagerId',
+          message: 'Select the new manager for the employee:',
+          choices: employees.map((employee) => ({
+            name: `${employee.first_name} ${employee.last_name}`,
+            value: employee.id,
+          })),
+        },
+      ]);
+    
+      await updateEmployeeManagerPrompt(employeeId, newManagerId);
+      console.log('Employee manager updated successfully!');
+      mainMenu();
     };
 
-    const getEmployeesByDepartment = async () => {
+    const getEmployeesByDepartmentPrompt = async () => {
+      const departments = await getAllDepartments();
 
+      const { departmentId } = await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'departmentId',
+          message: 'Select the department whose employees you want to view:',
+          choices: departments.map((department) => ({
+            name: department.name,
+            value: department.id,
+          })),
+        },
+      ]);
+    
+      const employees = await getEmployeesByDepartmentPrompt(departmentId);
+      console.table(employees);
+      mainMenu();
     };
 
-    const deleteDepartment = async () => {
+    const deleteDepartmentPrompt = async () => {
+      const departments = await getAllDepartmentsPrompt();
 
+      const { departmentId } = await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'departmentId',
+          message: 'Select the department you want to delete:',
+          choices: departments.map((department) => ({
+            name: department.name,
+            value: department.id,
+          })),
+        },
+      ]);
+    
+      await deleteDepartmentPrompt(departmentId);
+      console.log('Department deleted successfully!');
+      mainMenu();
     };
 
-    const deleteRole = async () => {
+    const deleteRolePrompt = async () => {
+      const roles = await getAllRoles();
 
+      const { roleId } = await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'roleId',
+          message: 'Select the role you want to delete:',
+          choices: roles.map((role) => ({
+            name: role.title,
+            value: role.id,
+          })),
+        },
+      ]);
+    
+      await deleteRolePrompt(roleId);
+      console.log('Role deleted successfully!');
+      mainMenu();
     };
 
-    const deleteEmployee = async () => {
+    const deleteEmployeePrompt = async () => {
+      const employees = await getAllEmployeesPrompt();
 
+      const { employeeId } = await inquirer.prompt([
+        {
+          type: 'list',
+          name: 'employeeId',
+          message: 'Select the employee you want to delete:',
+          choices: employees.map((employee) => ({
+            name: `${employee.first_name} ${employee.last_name}`,
+            value: employee.id,
+          })),
+        },
+      ]);
+    
+      await deleteEmployeePrompt(employeeId);
+      console.log('Employee deleted successfully!');
+      mainMenu();
     };
 
-    const viewDepartmentBudgets = async () => {
-
+    const viewDepartmentBudgetsPrompt = async () => {
+      const departmentBudgets = await getDepartmentBudgets();
+      console.table(departmentBudgets);
+      mainMenu();
     };
 
     
 mainMenu();
 
-});
+})();
