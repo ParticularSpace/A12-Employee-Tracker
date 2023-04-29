@@ -3,21 +3,20 @@ require('dotenv').config();
 (async () => {
   const { default: inquirer } = await import('inquirer');
 
-
     const {
-        getAllDepartments,
-        addDepartment,
-        getAllRoles,
-        addRole,
-        getAllEmployees,
-        addEmployee,
-        updateEmployeeRole,
-        updateEmployeeManager,
-        getEmployeesByDepartment,
-        deleteDepartment,
-        deleteRole,
-        deleteEmployee,
-        viewDepartmentBudgets,
+      viewAllDepartments,
+      addDepartment,
+      viewAllRoles,
+      addRole,
+      viewAllEmployees,
+      addEmployee,
+      updateEmployeeRole,
+      updateEmployeeToManager,
+      getEmployeesByDepartment,
+      deleteDepartment,
+      deleteRole,
+      deleteEmployee,
+      viewDepartmentBudgets,
     } = require('./db/queries');
     
     
@@ -50,31 +49,31 @@ const mainMenu = async () => {
   // Call the appropriate function depending on what the user chose
   switch (choice) {
     case 'View All Departments':
-      return viewAllDepartments();
+      return viewAllDepartmentsPrompt();
     case 'Add Department':
-      return addNewDepartment();
+      return addNewDepartmentPrompt();
     case 'View All Roles':
-        return viewAllRoles();
+        return viewAllRolesPrompt();
     case 'Add Role':
-        return addRole();
+        return addRolePrompt();
     case 'View All Employees':
-        return viewAllEmployees();
+        return viewAllEmployeesPrompt();
     case 'Add Employee':
-        return addNewEmployee();
+        return addNewEmployeePrompt();
     case 'Update Employee Role':
-        return updateEmployeeRole();
+        return updateEmployeeRolePrompt();
     case 'Update Employee Manager':
-        return updateEmployeeManager();
+        return updateEmployeeToManagerPrompt();
     case 'View Employees By Department':
-        return getEmployeesByDepartment();
+        return getEmployeesByDepartmentPrompt();
     case 'Delete Department':
-        return deleteDepartment();
+        return deleteDepartmentPrompt();
     case 'Delete Role':
-        return deleteRole();
+        return deleteRolePrompt();
     case 'Delete Employee':
-        return deleteEmployee();
+        return deleteEmployeePrompt();
     case 'View Department Budgets':
-        return viewDepartmentBudgets();
+        return viewDepartmentBudgetsPrompt();
     case 'Exit':
       console.log('Goodbye!');
       process.exit(0);
@@ -82,14 +81,14 @@ const mainMenu = async () => {
 };
 
 // Call the mainMenu function to start the application
-const viewAllDepartments = async () => {
-  const departments = await getAllDepartments();
+const viewAllDepartmentsPrompt = async () => {
+  const departments = await viewAllDepartments();
   console.table(departments);
   mainMenu();
 };
 
 // Prompt the user for a new department name and then add it to the database
-const addNewDepartment = async () => {
+const addNewDepartmentPrompt = async () => {
   const { departmentName } = await inquirer.prompt([
     {
       type: 'input',
@@ -104,8 +103,8 @@ const addNewDepartment = async () => {
 };
 
 // Prompt user to view all roles
-const viewAllRoles = async () => {
-    const roles = await getAllRoles();
+const viewAllRolesPrompt = async () => {
+    const roles = await viewAllRoles();
     console.table(roles);
     mainMenu();
   };
@@ -113,7 +112,7 @@ const viewAllRoles = async () => {
   // Prompt the user for a new role name and then add it to the database
   const addRolePrompt = async () => {
     
-    const departments = await getAllDepartments();
+    const departments = await viewAllDepartments();
   
     const { title, salary, departmentId } = await inquirer.prompt([
       {
@@ -137,15 +136,15 @@ const viewAllRoles = async () => {
       },
     ]);
   
-    await addRolePrompt(title, salary, departmentId);
+    await addRole(title, salary, departmentId);
     console.log('Role added successfully!');
     mainMenu();
   };
 
   // Prompt user to view all employees
-  const viewAllEmployees = async () => {
+  const viewAllEmployeesPrompt = async () => {
     try {
-      const employees = await getAllEmployees();
+      const employees = await viewAllEmployees();
       console.table(employees);
       mainMenu();
     } catch (err) {
@@ -155,9 +154,9 @@ const viewAllRoles = async () => {
   
 
     // Prompt the user for a new employee name and then add it to the database
-    const addNewEmployee = async () => {
-        const roles = await getAllRoles();
-        const employees = await getAllEmployeesPrompt();
+    const addNewEmployeePrompt = async () => {
+        const roles = await viewAllRoles();
+        const employees = await viewAllEmployees();
 
         const { firstName, lastName, roleId, managerId } = await inquirer.prompt([
             {
@@ -196,8 +195,8 @@ const viewAllRoles = async () => {
     };
 
     const updateEmployeeRolePrompt = async () => {
-      const employees = await getAllEmployeesPrompt();
-      const roles = await getAllRoles();
+      const employees = await viewAllEmployees();
+      const roles = await viewAllRoles();
     
       const { employeeId, newRoleId } = await inquirer.prompt([
         {
@@ -220,13 +219,13 @@ const viewAllRoles = async () => {
         },
       ]);
     
-      await updateEmployeeRolePrompt(employeeId, newRoleId);
+      await updateEmployeeRole(employeeId, newRoleId);
       console.log('Employee role updated successfully!');
       mainMenu();
     };
 
-    const updateEmployeeManagerPrompt = async () => {
-      const employees = await getAllEmployeesPrompt();
+    const updateEmployeeToManagerPrompt = async () => {
+      const employees = await viewAllEmployees();
 
       const { employeeId, newManagerId } = await inquirer.prompt([
         {
@@ -249,13 +248,13 @@ const viewAllRoles = async () => {
         },
       ]);
     
-      await updateEmployeeManagerPrompt(employeeId, newManagerId);
+      await updateEmployeeToManager(employeeId, newManagerId);
       console.log('Employee manager updated successfully!');
       mainMenu();
     };
 
     const getEmployeesByDepartmentPrompt = async () => {
-      const departments = await getAllDepartments();
+      const departments = await viewAllDepartments();
 
       const { departmentId } = await inquirer.prompt([
         {
@@ -269,13 +268,13 @@ const viewAllRoles = async () => {
         },
       ]);
     
-      const employees = await getEmployeesByDepartmentPrompt(departmentId);
+      const employees = await getEmployeesByDepartment(departmentId);
       console.table(employees);
       mainMenu();
     };
 
     const deleteDepartmentPrompt = async () => {
-      const departments = await getAllDepartments();
+      const departments = await viewAllDepartments();
 
       const { departmentId } = await inquirer.prompt([
         {
@@ -295,7 +294,7 @@ const viewAllRoles = async () => {
     };
 
     const deleteRolePrompt = async () => {
-      const roles = await getAllRoles();
+      const roles = await viewAllRoles();
 
       const { roleId } = await inquirer.prompt([
         {
@@ -309,13 +308,13 @@ const viewAllRoles = async () => {
         },
       ]);
     
-      await deleteRolePrompt(roleId);
+      await deleteRole(roleId);
       console.log('Role deleted successfully!');
       mainMenu();
     };
 
     const deleteEmployeePrompt = async () => {
-      const employees = await getAllEmployeesPrompt();
+      const employees = await viewAllEmployees();
 
       const { employeeId } = await inquirer.prompt([
         {
@@ -329,13 +328,13 @@ const viewAllRoles = async () => {
         },
       ]);
     
-      await deleteEmployeePrompt(employeeId);
+      await deleteEmployee(employeeId);
       console.log('Employee deleted successfully!');
       mainMenu();
     };
 
     const viewDepartmentBudgetsPrompt = async () => {
-      const departmentBudgets = await viewDepartmentBudgetsPrompt();
+      const departmentBudgets = await viewDepartmentBudgets();
       console.table(departmentBudgets);
       mainMenu();
     };

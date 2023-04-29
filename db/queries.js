@@ -1,9 +1,31 @@
 const connection = require('./conection.js');
 
 //Query to get all departments
-const getAllDepartments = () => {
+const viewAllDepartments = () => {
     return new Promise((resolve, reject) => {
         const query = 'SELECT * FROM departments';
+        connection.query(query, (err, results) => {
+            if (err) reject(err);
+            resolve(results);
+        });
+    });
+};
+
+// query to get all roles
+const viewAllRoles = () => {
+    return new Promise((resolve, reject) => {
+        const query = 'SELECT * FROM role';
+        connection.query(query, (err, results) => {
+            if (err) reject(err);
+            resolve(results);
+        });
+    });
+};
+
+// Query to get all employees
+const viewAllEmployees = () => {
+    return new Promise((resolve, reject) => {
+        const query = 'SELECT * FROM employee';
         connection.query(query, (err, results) => {
             if (err) reject(err);
             resolve(results);
@@ -22,34 +44,11 @@ const addDepartment = (departmentName) => {
     });
 };
 
-// query to get all roles
-
-const getAllRoles = () => {
-    return new Promise((resolve, reject) => {
-        const query = 'SELECT * FROM role';
-        connection.query(query, (err, results) => {
-            if (err) reject(err);
-            resolve(results);
-        });
-    });
-};
-
 // Query to add roles
 const addRole = (role) => {
     return new Promise((resolve, reject) => {
         const query = 'INSERT INTO role SET ?';
         connection.query(query, { title: role.title, salary: role.salary, department_id: role.department_id }, (err, results) => {
-            if (err) reject(err);
-            resolve(results);
-        });
-    });
-};
-
-// Query to get all employees
-const getAllEmployees = () => {
-    return new Promise((resolve, reject) => {
-        const query = 'SELECT * FROM employee';
-        connection.query(query, (err, results) => {
             if (err) reject(err);
             resolve(results);
         });
@@ -78,7 +77,7 @@ const updateEmployeeRole = (employee) => {
     });
 };
 
-const updateEmployeeManager = (employee) => {
+const updateEmployeeToManager = (employee) => {
     return new Promise((resolve, reject) => {
         const query = 'UPDATE employee SET manager_id = ? WHERE id = ?';
         connection.query(query, [employee.manager_id, employee.id], (err, results) => {
@@ -135,7 +134,7 @@ const deleteEmployee = (employeeId) => {
 // Query to view department budgets
 const viewDepartmentBudgets = () => {
     return new Promise((resolve, reject) => {
-        const query = 'SELECT departments.id, departments.name, SUM(roles.salary) as budget FROM departments JOIN role ON departments.id = roles.department_id GROUP BY departments.id, departments.name';
+        const query = 'SELECT departments.id, departments.name, SUM(roles.salary) as budget FROM departments JOIN role ON departments.id = role.department_id GROUP BY departments.id, departments.name';
         connection.query(query, (err, results) => {
             if (err) reject(err);
             resolve(results);
@@ -143,20 +142,16 @@ const viewDepartmentBudgets = () => {
     });
 };
 
-
-
-
-
 // Export all functions as methods to be used in index.js
 module.exports = {
-    getAllDepartments,
+    viewAllDepartments,
     addDepartment,
-    getAllRoles,
+    viewAllRoles,
     addRole,
-    getAllEmployees,
+    viewAllEmployees,
     addEmployee,
     updateEmployeeRole,
-    updateEmployeeManager,
+    updateEmployeeToManager,
     getEmployeesByDepartment,
     deleteDepartment,
     deleteRole,
