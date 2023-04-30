@@ -23,7 +23,7 @@ const figlet = require('figlet');
     viewAllEmployees,
     addEmployee,
     updateEmployeeRole,
-    updateEmployeeToManager,
+    updateEmployeeManager,
     getEmployeesByDepartment,
     deleteDepartment,
     deleteRole,
@@ -78,7 +78,7 @@ const figlet = require('figlet');
       case 'Update Employee Role':
         return updateEmployeeRolePrompt();
       case 'Update Employee Manager':
-        return updateEmployeeToManagerPrompt();
+        return updateEmployeeManagerPrompt();
       case 'View Employees By Department':
         return getEmployeesByDepartmentPrompt();
       case 'Delete Department':
@@ -104,15 +104,15 @@ const figlet = require('figlet');
 
   // Prompt the user for a new department name and then add it to the database
   const addNewDepartmentPrompt = async () => {
-    const { departmentName } = await inquirer.prompt([
+    const { department_name } = await inquirer.prompt([
       {
         type: 'input',
-        name: 'departmentName',
+        name: 'department_name',
         message: 'Enter the new department name:',
       },
     ]);
 
-    await addDepartment(departmentName);
+    await addDepartment(department_name);
     console.log('Department added successfully!');
     mainMenu();
   };
@@ -127,7 +127,7 @@ const figlet = require('figlet');
   // Prompt the user for a new role name and then add it to the database
   const addRolePrompt = async () => {
     const departments = await viewAllDepartments();
-    const { title, salary, departmentId } = await inquirer.prompt([
+    const { title, salary, department_id } = await inquirer.prompt([
       {
         type: 'input',
         name: 'title',
@@ -140,7 +140,7 @@ const figlet = require('figlet');
       },
       {
         type: 'list',
-        name: 'departmentId',
+        name: 'department_id',
         message: 'Choose the department for this role:',
         choices: departments.map((department) => ({
           name: department.name,
@@ -149,7 +149,7 @@ const figlet = require('figlet');
       },
     ]);
     try {
-      await addRole({title, salary, departmentId});
+      await addRole({title, salary, department_id});
       console.log('Role added successfully!');
     } catch (error) {
       console.log('Error adding role:', error);
@@ -175,20 +175,20 @@ const figlet = require('figlet');
     const roles = await viewAllRoles();
     const employees = await viewAllEmployees();
 
-    const { firstName, lastName, roleId, managerId } = await inquirer.prompt([
+    const { first_name, last_name, role_id, manager_id } = await inquirer.prompt([
       {
         type: 'input',
-        name: 'firstName',
+        name: 'first_name',
         message: 'Enter the new employee first name:',
       },
       {
         type: 'input',
-        name: 'lastName',
+        name: 'last_name',
         message: 'Enter the new employee last name:',
       },
       {
         type: 'list',
-        name: 'roleId',
+        name: 'role_id',
         message: 'Choose the role for this employee:',
         choices: roles.map((role) => ({
           name: role.title,
@@ -197,7 +197,7 @@ const figlet = require('figlet');
       },
       {
         type: 'list',
-        name: 'managerId',
+        name: 'manager_id',
         message: 'Choose the manager for this employee:',
         choices: employees.map((employee) => ({
           name: `${employee.first_name} ${employee.last_name}`,
@@ -206,7 +206,7 @@ const figlet = require('figlet');
       },
     ]);
 
-    await addEmployee(firstName, lastName, roleId, managerId);
+    await addEmployee({first_name, last_name, role_id, manager_id});
     console.log('Employee added successfully!');
     mainMenu();
   };
@@ -214,11 +214,11 @@ const figlet = require('figlet');
   const updateEmployeeRolePrompt = async () => {
     const employees = await viewAllEmployees();
     const roles = await viewAllRoles();
-
-    const { employeeId, newRoleId } = await inquirer.prompt([
+  
+    const { employee_id, newRole_id } = await inquirer.prompt([
       {
         type: 'list',
-        name: 'employeeId',
+        name: 'employee_id',
         message: 'Select the employee whose role you want to update:',
         choices: employees.map((employee) => ({
           name: `${employee.first_name} ${employee.last_name}`,
@@ -227,7 +227,7 @@ const figlet = require('figlet');
       },
       {
         type: 'list',
-        name: 'newRoleId',
+        name: 'newRole_id',
         message: 'Select the new role for the employee:',
         choices: roles.map((role) => ({
           name: role.title,
@@ -235,19 +235,21 @@ const figlet = require('figlet');
         })),
       },
     ]);
-
-    await updateEmployeeRole(employeeId, newRoleId);
+  
+    const employee = { id: employee_id, role_id: newRole_id };
+    await updateEmployeeRole(employee);
     console.log('Employee role updated successfully!');
     mainMenu();
   };
+  
 
-  const updateEmployeeToManagerPrompt = async () => {
+  const updateEmployeeManagerPrompt = async () => {
     const employees = await viewAllEmployees();
 
-    const { employeeId, newManagerId } = await inquirer.prompt([
+    const { employee_id, manager_id } = await inquirer.prompt([
       {
         type: 'list',
-        name: 'employeeId',
+        name: 'employee_id',
         message: 'Select the employee whose manager you want to update:',
         choices: employees.map((employee) => ({
           name: `${employee.first_name} ${employee.last_name}`,
@@ -256,7 +258,7 @@ const figlet = require('figlet');
       },
       {
         type: 'list',
-        name: 'newManagerId',
+        name: 'manager_id',
         message: 'Select the new manager for the employee:',
         choices: employees.map((employee) => ({
           name: `${employee.first_name} ${employee.last_name}`,
@@ -265,7 +267,7 @@ const figlet = require('figlet');
       },
     ]);
 
-    await updateEmployeeToManager(employeeId, newManagerId);
+    await updateEmployeeManager(employee_id, manager_id);
     console.log('Employee manager updated successfully!');
     mainMenu();
   };
@@ -273,10 +275,10 @@ const figlet = require('figlet');
   const getEmployeesByDepartmentPrompt = async () => {
     const departments = await viewAllDepartments();
 
-    const { departmentId } = await inquirer.prompt([
+    const { department_id } = await inquirer.prompt([
       {
         type: 'list',
-        name: 'departmentId',
+        name: 'department_id',
         message: 'Select the department whose employees you want to view:',
         choices: departments.map((department) => ({
           name: department.name,
@@ -285,7 +287,7 @@ const figlet = require('figlet');
       },
     ]);
 
-    const employees = await getEmployeesByDepartment(departmentId);
+    const employees = await getEmployeesByDepartment(department_id);
     console.table(employees);
     mainMenu();
   };
@@ -293,10 +295,10 @@ const figlet = require('figlet');
   const deleteDepartmentPrompt = async () => {
     const departments = await viewAllDepartments();
 
-    const { departmentId } = await inquirer.prompt([
+    const { department_id } = await inquirer.prompt([
       {
         type: 'list',
-        name: 'departmentId',
+        name: 'department_id',
         message: 'Select the department you want to delete:',
         choices: departments.map((department) => ({
           name: department.name,
@@ -305,7 +307,7 @@ const figlet = require('figlet');
       },
     ]);
 
-    await deleteDepartment(departmentId);
+    await deleteDepartment(department_id);
     console.log('Department deleted successfully!');
     mainMenu();
   };
@@ -313,10 +315,10 @@ const figlet = require('figlet');
   const deleteRolePrompt = async () => {
     const roles = await viewAllRoles();
 
-    const { roleId } = await inquirer.prompt([
+    const { role_id } = await inquirer.prompt([
       {
         type: 'list',
-        name: 'roleId',
+        name: 'role_id',
         message: 'Select the role you want to delete:',
         choices: roles.map((role) => ({
           name: role.title,
@@ -325,7 +327,7 @@ const figlet = require('figlet');
       },
     ]);
 
-    await deleteRole(roleId);
+    await deleteRole(role_id);
     console.log('Role deleted successfully!');
     mainMenu();
   };
@@ -333,10 +335,10 @@ const figlet = require('figlet');
   const deleteEmployeePrompt = async () => {
     const employees = await viewAllEmployees();
 
-    const { employeeId } = await inquirer.prompt([
+    const { employee_id } = await inquirer.prompt([
       {
         type: 'list',
-        name: 'employeeId',
+        name: 'employee_id',
         message: 'Select the employee you want to delete:',
         choices: employees.map((employee) => ({
           name: `${employee.first_name} ${employee.last_name}`,
@@ -345,7 +347,7 @@ const figlet = require('figlet');
       },
     ]);
 
-    await deleteEmployee(employeeId);
+    await deleteEmployee(employee_id);
     console.log('Employee deleted successfully!');
     mainMenu();
   };

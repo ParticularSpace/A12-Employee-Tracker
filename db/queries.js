@@ -3,8 +3,19 @@ const connection = require('./conection.js');
 //Query to get all departments
 const viewAllDepartments = () => {
     return new Promise((resolve, reject) => {
-        const query = 'SELECT DISTINCT name FROM departments';
+        const query = 'SELECT id, name FROM departments';
         connection.query(query, (err, results) => {
+            if (err) reject(err);
+            resolve(results);
+        });
+    });
+};
+
+//Query to add a department
+const addDepartment = (department_name) => {
+    return new Promise((resolve, reject) => {
+        const query = 'INSERT INTO departments SET ?';
+        connection.query(query, { name: department_name }, (err, results) => {
             if (err) reject(err);
             resolve(results);
         });
@@ -20,48 +31,13 @@ const viewAllRoles = () => {
           JOIN departments ON roles.department_id = departments.id;
         `;
         connection.query(query, (err, results) => {
-          if (err) {
-            reject(err);
-            return;
-          }
-          results.forEach(row => {
-            delete row.index;
-          });
-          resolve(results);
-        });
-      });
-};
-
-// Query to get all employees
-const viewAllEmployees = () => {
-    return new Promise((resolve, reject) => {
-        const query = `
-          SELECT 
-            e.id, 
-            e.first_name, 
-            e.last_name, 
-            r.title, 
-            d.name AS department, 
-            r.salary, 
-            CONCAT(m.first_name, ' ', m.last_name) AS manager
-          FROM employees e
-          LEFT JOIN roles r ON e.role_id = r.id
-          LEFT JOIN departments d ON r.department_id = d.id
-          LEFT JOIN employees m ON e.manager_id = m.id;
-        `;
-        connection.query(query, (err, results) => {
-          if (err) reject(err);
-          resolve(results);
-        });
-      });
-};
-
-//Query to add a department
-const addDepartment = (departmentName) => {
-    return new Promise((resolve, reject) => {
-        const query = 'INSERT INTO departments SET ?';
-        connection.query(query, { name: departmentName }, (err, results) => {
-            if (err) reject(err);
+            if (err) {
+                reject(err);
+                return;
+            }
+            results.forEach(row => {
+                delete row.index;
+            });
             resolve(results);
         });
     });
@@ -82,15 +58,31 @@ const addRole = (role) => {
     });
 };
 
+// Query to get all employees
+const viewAllEmployees = () => {
+    return new Promise((resolve, reject) => {
+        const query = `SELECT e.id, e.first_name, e.last_name, r.title, d.name AS department, r.salary, CONCAT(m.first_name, ' ', m.last_name) AS manager
+                       FROM employees e
+                       LEFT JOIN roles r ON e.role_id = r.id
+                       LEFT JOIN departments d ON r.department_id = d.id
+                       LEFT JOIN employees m ON e.manager_id = m.id`;
+        connection.query(query, (err, results) => {
+            if (err) reject(err);
+            resolve(results);
+        });
+    });
+};
+
 // Query to add a role
 const addEmployee = (employee) => {
+    console.log('employee:', employee);
     return new Promise((resolve, reject) => {
         const query = 'INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)';
         connection.query(query, [employee.first_name, employee.last_name, employee.role_id, employee.manager_id], (err, results) => {
-          if (err) reject(err);
-          resolve(results);
+            if (err) reject(err);
+            resolve(results);
         });
-      });
+    });
 };
 
 // Query to update an employee's role
@@ -104,10 +96,10 @@ const updateEmployeeRole = (employee) => {
     });
 };
 
-const updateEmployeeToManager = (employee) => {
+const updateEmployeeManager = (employee_id, manager_id) => {
     return new Promise((resolve, reject) => {
         const query = 'UPDATE employees SET manager_id = ? WHERE id = ?';
-        connection.query(query, [employee.manager_id, employee.id], (err, results) => {
+        connection.query(query, [manager_id, employee_id], (err, results) => {
             if (err) reject(err);
             resolve(results);
         });
@@ -115,10 +107,10 @@ const updateEmployeeToManager = (employee) => {
 };
 
 // Query to get all employees by department
-const getEmployeesByDepartment = (departmentId) => {
+const getEmployeesByDepartment = (department_id) => {
     return new Promise((resolve, reject) => {
         const query = 'SELECT DISTINCT * FROM employees WHERE role_id IN (SELECT id FROM roles WHERE department_id = ?)';
-        connection.query(query, [departmentId], (err, results) => {
+        connection.query(query, [department_id], (err, results) => {
             if (err) reject(err);
             resolve(results);
         });
@@ -126,10 +118,10 @@ const getEmployeesByDepartment = (departmentId) => {
 };
 
 // Query to delete a department
-const deleteDepartment = (departmentId) => {
+const deleteDepartment = (department_id) => {
     return new Promise((resolve, reject) => {
         const query = 'DELETE FROM departments WHERE id = ?';
-        connection.query(query, [departmentId], (err, results) => {
+        connection.query(query, [department_id], (err, results) => {
             if (err) reject(err);
             resolve(results);
         });
@@ -137,10 +129,10 @@ const deleteDepartment = (departmentId) => {
 };
 
 // Query to delete a role
-const deleteRole = (roleId) => {
+const deleteRole = (role_id) => {
     return new Promise((resolve, reject) => {
         const query = 'DELETE FROM roles WHERE id = ?';
-        connection.query(query, [roleId], (err, results) => {
+        connection.query(query, [role_id], (err, results) => {
             if (err) reject(err);
             resolve(results);
         });
@@ -148,10 +140,10 @@ const deleteRole = (roleId) => {
 };
 
 // Query to delete an employee
-const deleteEmployee = (employeeId) => {
+const deleteEmployee = (employee_id) => {
     return new Promise((resolve, reject) => {
         const query = 'DELETE FROM employees WHERE id = ?';
-        connection.query(query, [employeeId], (err, results) => {
+        connection.query(query, [employee_id], (err, results) => {
             if (err) reject(err);
             resolve(results);
         });
@@ -178,7 +170,7 @@ module.exports = {
     viewAllEmployees,
     addEmployee,
     updateEmployeeRole,
-    updateEmployeeToManager,
+    updateEmployeeManager,
     getEmployeesByDepartment,
     deleteDepartment,
     deleteRole,
