@@ -310,7 +310,7 @@ const figlet = require('figlet');
       },
     ]);
 
-    await deleteDepartment(department_id);
+    await deleteDepartment(department_id, mainMenu);
     console.log('Department deleted successfully!');
     mainMenu();
   };

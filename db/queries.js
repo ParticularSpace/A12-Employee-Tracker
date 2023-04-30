@@ -119,15 +119,23 @@ const getEmployeesByDepartment = (department_id) => {
 };
 
 // Query to delete a department
-const deleteDepartment = (department_id) => {
-    return new Promise((resolve, reject) => {
-        const query = 'DELETE FROM departments WHERE id = ?';
-        connection.query(query, [department_id], (err, results) => {
-            if (err) reject(err);
-            resolve(results);
-        });
-    });
+const deleteDepartment = async (department_id, mainMenu) => {
+  try {
+    const [rows] = await connection.promise().query('SELECT COUNT(*) as count FROM roles WHERE department_id = ?', department_id);
+    const count = rows[0].count;
+    if (count > 0) {
+      console.log("Cannot delete a department with roles assigned to it. Please delete the roles first.");
+      return;
+    }
+
+    await connection.promise().query('DELETE FROM departments WHERE id = ?', department_id);
+    console.log("Department deleted successfully!");  
+    mainMenu();
+  } catch (err) {
+    console.log(`Error deleting department: ${err}`);
+  }
 };
+
 
 // Query to delete a role
 const deleteRole = (role_id) => {
