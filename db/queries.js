@@ -73,7 +73,7 @@ const viewAllEmployees = () => {
     });
 };
 
-// Query to add a role
+// Query to add a employee 
 const addEmployee = (employee) => {
     console.log('employee:', employee);
     return new Promise((resolve, reject) => {
@@ -96,6 +96,7 @@ const updateEmployeeRole = (employee) => {
     });
 };
 
+// Query to update an employee's manager
 const updateEmployeeManager = (employee_id, manager_id) => {
     return new Promise((resolve, reject) => {
         const query = 'UPDATE employees SET manager_id = ? WHERE id = ?';
@@ -106,7 +107,7 @@ const updateEmployeeManager = (employee_id, manager_id) => {
     });
 };
 
-// Query to get all employees by department
+// Query to get an employee by department
 const getEmployeesByDepartment = (department_id) => {
     return new Promise((resolve, reject) => {
         const query = 'SELECT DISTINCT * FROM employees WHERE role_id IN (SELECT id FROM roles WHERE department_id = ?)';
@@ -150,7 +151,7 @@ const deleteEmployee = (employee_id) => {
     });
 };
 
-// Query to view department budgets
+// Query to view department budgets total salaries
 const viewDepartmentBudgets = () => {
     return new Promise((resolve, reject) => {
       const query = 'SELECT departments.id, departments.name, SUM(roles.salary) as budget FROM departments JOIN roles ON departments.id = roles.department_id JOIN employees ON roles.id = employees.role_id GROUP BY departments.id, departments.name';

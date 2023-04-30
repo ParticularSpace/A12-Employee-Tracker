@@ -36,7 +36,7 @@ const figlet = require('figlet');
   const mainMenu = async () => {
     
 
-
+// Prompt user and execute the appropriate function depending on what they choose
     const { choice } = await inquirer.prompt([
       {
         type: 'list',
@@ -95,14 +95,14 @@ const figlet = require('figlet');
     }
   };
 
-  // Call the mainMenu function to start the application
+  // If the user chooses to view all employees, call the viewAllEmployees function and then return to the main menu
   const viewAllDepartmentsPrompt = async () => {
     const departments = await viewAllDepartments();
     console.table(departments);
     mainMenu();
   };
 
-  // Prompt the user for a new department name and then add it to the database
+  // User selects add department, we prompt them for the name and then add it to the database
   const addNewDepartmentPrompt = async () => {
     const { department_name } = await inquirer.prompt([
       {
@@ -117,14 +117,14 @@ const figlet = require('figlet');
     mainMenu();
   };
 
-  // Prompt user to view all roles
+  // User selects view all roles, we call the viewAllRoles function and then return to the main menu
   const viewAllRolesPrompt = async () => {
     const roles = await viewAllRoles();
     console.table(roles);
     mainMenu();
   };
 
-  // Prompt the user for a new role name and then add it to the database
+  // user selects add role, we prompt them for the title, salary, and department and then add it to the database
   const addRolePrompt = async () => {
     const departments = await viewAllDepartments();
     const { title, salary, department_id } = await inquirer.prompt([
@@ -158,7 +158,7 @@ const figlet = require('figlet');
   };
   
 
-  // Prompt user to view all employees
+  // user selects view all employees, we call the viewAllEmployees function and then return to the main menu
   const viewAllEmployeesPrompt = async () => {
     try {
       const employees = await viewAllEmployees();
@@ -170,7 +170,7 @@ const figlet = require('figlet');
   };
 
 
-  // Prompt the user for a new employee name and then add it to the database
+  // User selects add employee, we prompt them for the first name, last name, role, and manager and then add it to the database
   const addNewEmployeePrompt = async () => {
     const roles = await viewAllRoles();
     const employees = await viewAllEmployees();
@@ -211,6 +211,7 @@ const figlet = require('figlet');
     mainMenu();
   };
 
+  // User selects update employee role, we prompt them for the employee and the new role and then update it in the database
   const updateEmployeeRolePrompt = async () => {
     const employees = await viewAllEmployees();
     const roles = await viewAllRoles();
@@ -242,7 +243,7 @@ const figlet = require('figlet');
     mainMenu();
   };
   
-
+  // User selects update employee manager, we prompt them for the employee and the new manager and then update it in the database
   const updateEmployeeManagerPrompt = async () => {
     const employees = await viewAllEmployees();
 
@@ -272,6 +273,7 @@ const figlet = require('figlet');
     mainMenu();
   };
 
+  // user wants to view an employee by department, we prompt them for the department and then return the employees
   const getEmployeesByDepartmentPrompt = async () => {
     const departments = await viewAllDepartments();
 
@@ -292,6 +294,7 @@ const figlet = require('figlet');
     mainMenu();
   };
 
+  // remove a the users choice of department from the database
   const deleteDepartmentPrompt = async () => {
     const departments = await viewAllDepartments();
 
@@ -312,6 +315,7 @@ const figlet = require('figlet');
     mainMenu();
   };
 
+  // remove a the users choice of role from the database
   const deleteRolePrompt = async () => {
     const roles = await viewAllRoles();
 
@@ -332,6 +336,7 @@ const figlet = require('figlet');
     mainMenu();
   };
 
+  // remove a the users choice of employee from the database
   const deleteEmployeePrompt = async () => {
     const employees = await viewAllEmployees();
 
@@ -352,6 +357,7 @@ const figlet = require('figlet');
     mainMenu();
   };
 
+  //view all the departments total utilized budget
   const viewDepartmentBudgetsPrompt = async () => {
     const departmentBudgets = await viewDepartmentBudgets();
     console.table(departmentBudgets);

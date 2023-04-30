@@ -6,16 +6,16 @@ VALUES ("Engineers"),
        ("Walker"),
        ("PRs"),
        ("HR"),
-         ("Sales"),
-         ("Marketing"),
-         ("Accounting"),
-         ("Finance"),
-         ("Legal"),
-         ("IT"),
-         ("Customer Service"),
-         ("Security"),
-         ("Maintenance"),
-         ("Janitor");
+       ("Sales"),
+       ("Marketing"),
+       ("Accounting"),
+       ("Finance"),
+       ("Legal"),
+       ("IT"),
+       ("Customer Service"),
+       ("Security"),
+       ("Maintenance"),
+       ("Janitor");
 
 
 INSERT INTO roles (title, salary, department_id)
