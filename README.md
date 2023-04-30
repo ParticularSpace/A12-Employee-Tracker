@@ -4,30 +4,27 @@
 
 ## Description
 
-A command line application to help you easily orginze your employee database!
+A command line application to help you easily orginze your employee database in your terminal!
 
 ## Table of Contents
 
   - [Usage](#usage)
   - [Video Walkthrough](#video-walkthrough)
-  - [Screenshot](#screenshot)
   - [Credits](#credits)
   - [License](#license)
 
 ## Usage
 
-From your terminal in your code editor, run "node index.js" to start the application!     
+From your terminal navaigate to the A12-Employee-Tracker folder, run "node index.js" to start the application!     
 
 ## Video Walkthrough
 
 [Functionality video](https://drive.google.com/file/d/1KqKjskudwJ9lR16cZXAR_wNDAK8e9wgD/view "Video Walkthrough")
 
-## Screenshot
-
-![A picture of the logo](assets/svgviewer-png-output.png "Generated Logo")
 
 ## Credits
  - Manny, Professor at Boot Camp (Class notes)
+ - [W3 Schools](https://www.w3schools.com/sql/) (General Reference SQL queries)
  - UC Berkeley Coding Boot Camp Extension
 
 ## License
