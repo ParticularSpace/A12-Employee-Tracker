@@ -153,13 +153,14 @@ const deleteEmployee = (employee_id) => {
 // Query to view department budgets
 const viewDepartmentBudgets = () => {
     return new Promise((resolve, reject) => {
-        const query = 'SELECT departments.id, departments.name, SUM(roles.salary) as budget FROM departments JOIN roles ON departments.id = roles.department_id GROUP BY departments.id, departments.name';
-        connection.query(query, (err, results) => {
-            if (err) reject(err);
-            resolve(results);
-        });
+      const query = 'SELECT departments.id, departments.name, SUM(roles.salary) as budget FROM departments JOIN roles ON departments.id = roles.department_id JOIN employees ON roles.id = employees.role_id GROUP BY departments.id, departments.name';
+      connection.query(query, (err, results) => {
+        if (err) reject(err);
+        resolve(results);
+      });
     });
-};
+  };
+  
 
 // Export all functions as methods to be used in index.js
 module.exports = {
