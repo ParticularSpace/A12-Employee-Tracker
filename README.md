@@ -19,7 +19,7 @@ From your terminal navaigate to the A12-Employee-Tracker folder, run "node index
 
 ## Video Walkthrough
 
-[Functionality video](https://drive.google.com/file/d/1KqKjskudwJ9lR16cZXAR_wNDAK8e9wgD/view "Video Walkthrough")
+[Functionality video](https://drive.google.com/file/d/17ofLl0-iohqWyCZy-5sfVZimnhcpwsVZ/view "Video Walkthrough")
 
 
 ## Credits
